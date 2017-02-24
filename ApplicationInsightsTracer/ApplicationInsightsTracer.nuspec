@@ -15,5 +15,8 @@ Version 0.1.0 changes:
     </releaseNotes>
     <copyright>Copyright 2017</copyright>
     <tags>ApplicationInsights</tags>
+    <dependencies>
+      <dependency id="Microsoft.ApplicationInsights" version="2.2.0" />
+    </dependencies>
   </metadata>
 </package>
