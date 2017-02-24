@@ -1,95 +1,81 @@
-# WebJobs SDK Application Insights Extension
+# Application Insights Tracer
 
-This extension adds a binding for sending traces and telemetry (Requrests, Exceptions, Dependencies) to [Application Insights](https://azure.microsoft.com/en-us/services/application-insights/) .
+This library is a custom tracer that wraps the [Application Insights](https://azure.microsoft.com/en-us/services/application-insights/) TelemetryClient class.
 
 ```C#
-public void SimpleAITracerBinding([WebHookTrigger] Message m, AITracer aiTracer)
+public static void Main(string[] args)
 {
-    aiTracer.TraceInformation("Function started!");
+    AITracer aiTracer = AITracerFactory.CreateAITracer();
+    aiTracer.TraceInformation("This is a informational test trace");
+    aiTracer.TrackCustomEvent("Custom Event Name");
 }
 ```
 
-See here for more info about [Azure WebJobs SDK Extensions](https://github.com/Azure/azure-webjobs-sdk-extensions).
+See here for more info about using of the [Application Insights Telemetry Client](https://github.com/Microsoft/ApplicationInsights-dotnet).
 
 ## Installation
 
-You can obtain it [through Nuget](https://www.nuget.org/packages/WebJobs.ApplicationInsightsTracer/) with:
+You can obtain it [through Nuget](https://www.nuget.org/packages/ApplicationInsightsTracer/) with:
 ```
-Install-Package WebJobs.ApplicationInsightsTracer
+Install-Package ApplicationInsightsTracer
 ```
 
 Or **clone** this repo and reference it.
 
+## Initialization
+
+You can create a new `AITracer` object via the `AITracerFactory`.
+```C#
+AITracer aiTracer = AITracerFactory.CreateAITracer();
+```
+This default mode uses the active [`TelemetryConfiguration`](https://github.com/Microsoft/ApplicationInsights-dotnet/blob/37cec526194b833f7cd676f25eafd985dd88d3fa/src/Core/Managed/Shared/Extensibility/TelemetryConfiguration.cs) and takes the Instrumentation Key from the `APPINSIGHTS_INSTRUMENTATIONKEY` app.settings value.
+
+You can also create a new `TelemetryConfiguration` from the Applciation Insights SDK and pass it as a parameter:
+
+```C#
+TelemetryConfiguration config = TelemetryConfiguration.CreateDefault();
+config.InstrumentationKey = "MyIkey";
+aiTracer = AITracerFactory.CreateAITracer(telemetryConfiguration: config);
+```
+
 ## Usage
 
-The Application Insights binding returns a `AITracer` object implements an interface for sending tracers and telemetry messages to Application Insights endpoint.
+The `AITracer` object implements an interface for sending tracers and telemetry messages to Application Insights endpoint.
 
 A full example with different telemetry options:
 
 ```C#
-public void FullAITracerBinding([WebHookTrigger] Message m, AITracer aiTracer)
+public static void ExampleWithDifferentTelemetryTypes()
 {
-    // Create a request operation to wrap all the current trigger telemetry under a single group (i.e. Operation)
-        aiTracer.StartOperation("Test Operation");
+    AITracer aiTracer = AITracerFactory.CreateAITracer();
 
-        try
-        {
-            // Simple trace
-            aiTracer.TraceInformation("Function started!");
-            throw new Exception("Test Failure");
-        }
-        catch (Exception e)
-        {
-            // Report the exception to see full exception details in the Application Insights portal (including full Stack Trace)
-            aiTracer.ReportException(e);
+    // Simple trace
+    aiTracer.TraceInformation("Demo informational trace");
 
-            // Mark the operation as failure to see it in failed requests section
-            aiTracer.MarkOperationAsFailure();
-        }
-        finally
-        {
-            // Eventually, close the operation for this job
-            aiTracer.DispatchOperation();
+    try
+    {
+        aiTracer.TrackCustomEvent($"Demo Custom Event");
+        throw new Exception("Demoing Failure");
+    }
+    catch (Exception e)
+    {
+        // Report the exception to see full exception details in the Application Insights portal (including full Stack Trace)
+        aiTracer.ReportException(e);
+    }
 
-            // Remeber to flush the telemetry buffer before finising the job
-            aiTracer.Flush();
-        }
+    // send a custom metric value 
+    aiTracer.TrackCustomMetric("Demo metric", 42);
+
+    // Remeber to flush the telemetry buffer before ending the process
+    aiTracer.Flush();
 }
 ```
 
-You can enable the Extension via the `JobHostConfiguration` object.
-```C#
-var config = new JobHostConfiguration();
-// Use the AI Tracer extension with default configuration
-// The Instrumentation key can be also taken from the app settings
-config.UseAITracer("<IKEY_HERE>");
-```
+You can see more examples in the DemoApplciation in the repository.
 
-Or you can create a new [`TelemetryConfiguration`](https://github.com/Microsoft/ApplicationInsights-dotnet/blob/37cec526194b833f7cd676f25eafd985dd88d3fa/src/Core/Managed/Shared/Extensibility/TelemetryConfiguration.cs) from the Applciation Insights SDK and pass it as a parameter.
-```C#
-var config = new JobHostConfiguration();
-var telemetryConfiguration = TelemetryConfiguration.CreateDefault();
-telemetryConfiguration.InstrumentationKey = "<IKEY_HERE>";
-config.UseAITracer(telemetryConfiguration);
-```
-
-### Using the AITracer on different functions
-
-If your scenario includes creating a unique AITracer for each function that sends telemetry to a different Ikey, this can achieved using the AITracerparameter attributes.
-
-```C#
-public void SimpleAITracerBinding([WebHookTrigger] Message m,
-    [AITracerConfiguration(InstrumentationKey = "<IKEY_HERE>")] AITracer aiTracer)
-{
-    aiTracer.TraceInformation("Function started!");
-}
-```
-
-This creates a default `TelemetryConfiguration` with the new Ikey. The `AITracerConfiguration` can also take a `TelemetryConfiguration` as a parameter instead of using the default one. 
 
 ## Notes
 
-This is currently still in development. Not for production use.
 
 ## License
 

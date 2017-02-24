@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>0.1.0</version>
+    <title>Application Insights Tracer</title>
+    <authors>asafst@microsoft.com</authors>
+    <owners>asafst@microsoft.com</owners>
+    <projectUrl>https://github.com/asafst/ApplicationInsightsTracer</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>A custom tracer that wraps the Application Insights TelemetryClient for custom tracing capabilities</description>
+    <releaseNotes>
+Version 0.1.0 changes:
+- Initial release
+    </releaseNotes>
+    <copyright>Copyright 2017</copyright>
+    <tags>ApplicationInsights</tags>
+  </metadata>
+</package>

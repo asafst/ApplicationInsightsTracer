@@ -24,6 +24,11 @@
         private readonly IDictionary<string, string> _customProperties;
 
         /// <summary>
+        /// Custom properties that will be added to all events in the current operation
+        /// </summary>
+        private IDictionary<string, string> _customOperationProperties;
+
+        /// <summary>
         /// An implementation of the <see cref="ITelemetryOperationHandler"/> 
         /// </summary>
         private readonly ITelemetryOperationHandler _operationHandler;
@@ -39,6 +44,7 @@
             _operationHandler = operationHandler;
                 
             _customProperties = new Dictionary<string, string>();
+            _customOperationProperties = new Dictionary<string, string>();
         }
 
         #region Implementation of ITracer
@@ -209,20 +215,20 @@
         /// Starts a new operation.
         /// </summary>
         /// <param name="operationName">The name of the operation, to be used as OperationName in all telemtry items along the operation</param>
-        /// <param name="properties">custom properties to add to the operation summary telemetry</param>
+        /// <param name="properties">custom properties to be added to all telemetry in the operation</param>
         public IDisposable StartOperation(string operationName, IDictionary<string, string> properties = null)
         {
+            // Create a shallow copy
+            var mergedProperties = _customProperties.ToDictionary(e => e.Key, e => e.Value);
+
             if (properties != null)
             {
-                // merge global custom properties in the given properties
-                _customProperties.ToList().ForEach(kvp => properties[kvp.Key] = kvp.Value);
-            }
-            else
-            {
-                properties = _customProperties;
+                // add the operation propeties to the merged properties
+                properties.ToList().ForEach(kvp => mergedProperties[kvp.Key] = kvp.Value);
+                _customOperationProperties = properties;
             }
             
-            return _operationHandler.StartOperation(operationName, properties);
+            return _operationHandler.StartOperation(operationName, mergedProperties);
         }
 
         /// <summary>
@@ -239,6 +245,9 @@
         public void DispatchOperation()
         {
             _operationHandler.DispatchOperation();
+
+            // reset of operation properties
+            _customOperationProperties = new Dictionary<string, string>();
         }
         public void Dispose()
         {
@@ -263,8 +272,14 @@
 
         private void SetTelemetryProperties(ISupportProperties telemetry, IDictionary<string, string> properties = null)
         {
-            // Add the framework's custom properties
+            // Add the custom properties
             foreach (KeyValuePair<string, string> customProperty in _customProperties)
+            {
+                telemetry.Properties[customProperty.Key] = customProperty.Value;
+            }
+
+            // Add the custom operation properties (they override the general custom properties)
+            foreach (KeyValuePair<string, string> customProperty in _customOperationProperties)
             {
                 telemetry.Properties[customProperty.Key] = customProperty.Value;
             }
