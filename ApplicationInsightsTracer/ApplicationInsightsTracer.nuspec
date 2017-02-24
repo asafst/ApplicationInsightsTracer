@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>$id$</id>
-    <version>0.1.0</version>
+    <version>0.2.0</version>
     <title>Application Insights Tracer</title>
     <authors>asafst@microsoft.com</authors>
     <owners>asafst@microsoft.com</owners>
@@ -10,6 +10,9 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>A custom tracer that wraps the Application Insights TelemetryClient for custom tracing capabilities</description>
     <releaseNotes>
+Version 0.2.0 changes:
+- Fixed AIAggregatedTracer implementation, added the IAITracer interface
+
 Version 0.1.0 changes:
 - Initial release
     </releaseNotes>

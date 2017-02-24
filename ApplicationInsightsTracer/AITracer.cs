@@ -11,7 +11,7 @@
     /// <summary>
     /// Implementation of the <see cref="ITracer"/> interface that traces to AppInsights.
     /// </summary>
-    public class AITracer : ITracer, ITelemetryOperationHandler
+    public class AITracer : IAITracer
     {
         /// <summary>
         /// The internal Application Insights telemetry client

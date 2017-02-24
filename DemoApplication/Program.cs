@@ -7,7 +7,6 @@
     using Microsoft.ApplicationInsights;
     using Microsoft.ApplicationInsights.DataContracts;
     using Microsoft.ApplicationInsights.Extensibility;
-    using Microsoft.ApplicationInsights.Extensibility.Implementation;
 
     class Program
     {
@@ -18,14 +17,14 @@
 
         public static void SimpleExample()
         {
-            AITracer aiTracer = AITracerFactory.CreateAITracer();
+            IAITracer aiTracer = AITracerFactory.CreateAITracer();
             aiTracer.TraceInformation("This is a informational test trace");
             aiTracer.TrackCustomEvent("Custom Event Name");
         }
 
         public static void ExampleWithDifferentTelemetryTypes()
         {
-            AITracer aiTracer = AITracerFactory.CreateAITracer();
+            IAITracer aiTracer = AITracerFactory.CreateAITracer();
 
             // Simple trace
             aiTracer.TraceInformation("Demo informational trace");
@@ -50,7 +49,7 @@
 
         public static void FullExampleWithOperation()
         {
-            AITracer aiTracer = AITracerFactory.CreateAITracer();
+            IAITracer aiTracer = AITracerFactory.CreateAITracer();
 
             // Add a custom property to all traces
             aiTracer.AddCustomProperty("RunMode", "Demo");
@@ -103,7 +102,7 @@
         public static void InitializationExample()
         {
             // use the active telemetry confguration and take the instrumentation key from the App.config
-            AITracer aiTracer = AITracerFactory.CreateAITracer();
+            IAITracer aiTracer = AITracerFactory.CreateAITracer();
 
             // Create a default telemetry configuration and set instrumentation key manually
             TelemetryConfiguration config = TelemetryConfiguration.CreateDefault();

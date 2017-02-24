@@ -17,7 +17,7 @@
 
         private const string ApplicationInsightsInstrumentationKeyAppSettingsValue = "APPINSIGHTS_INSTRUMENTATIONKEY";
 
-        public static AITracer CreateAITracer(TelemetryConfiguration telemetryConfiguration = null,
+        public static IAITracer CreateAITracer(TelemetryConfiguration telemetryConfiguration = null,
             string sessionId = null,
             ITelemetryOperationHandler operationHandler = null)
         {
@@ -35,20 +35,14 @@
             return new AITracer(telemetryClient, operationHandler);
         }
 
-        public static AggregatedTracer CreateAggregatedTracer(TelemetryConfiguration telemetryConfiguration = null,
+        public static IAITracer CreateAggregatedTracer(TelemetryConfiguration telemetryConfiguration = null,
             string sessionId = null,
             ITelemetryOperationHandler operationHandler = null,
             IReadOnlyCollection<ITracer> additionalTracers = null)
         {
             var singleAITracer = CreateAITracer(telemetryConfiguration, sessionId, operationHandler);
 
-            var tracers = new List<ITracer> {singleAITracer};
-            if (additionalTracers != null && additionalTracers.Count > 0)
-            {
-                additionalTracers.ToList().ForEach(tracers.Add);
-            }
-
-            return new AggregatedTracer(tracers);
+            return new AIAggregatedTracer(singleAITracer, additionalTracers);
         }
 
         /// <summary>

@@ -49,11 +49,12 @@
     <Compile Include="AITracerFactory.cs" />
     <Compile Include="Exceptions\OperationNotStartedException.cs" />
     <Compile Include="Exceptions\OperationAlreadyStartedException.cs" />
+    <Compile Include="IAITracer.cs" />
     <Compile Include="OperationHandlers\ApplicationInsightsOperationHandler.cs" />
     <Compile Include="OperationHandlers\ApplicationInsightsRequestOperationHandler.cs" />
     <Compile Include="OperationHandlers\ITelemetryOperationHandler.cs" />
     <Compile Include="ITracer.cs" />
-    <Compile Include="OtherTracers\AggregatedTracer.cs" />
+    <Compile Include="AIAggregatedTracer.cs" />
     <Compile Include="OtherTracers\ConsoleTracer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="OtherTracers\TextWriterTracer.cs" />
