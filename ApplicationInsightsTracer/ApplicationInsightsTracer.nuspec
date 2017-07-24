@@ -11,7 +11,7 @@
     <description>A custom tracer that wraps the Application Insights TelemetryClient for custom tracing capabilities</description>
     <releaseNotes>
 Version 0.3.0 changes:
-- Updated to ApplciationInsights 2.4.0 nuget
+- Updated to ApplicationInsights 2.4.0 nuget
 
 Version 0.2.0 changes:
 - Fixed AIAggregatedTracer implementation, added the IAITracer interface
